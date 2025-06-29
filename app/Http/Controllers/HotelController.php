@@ -113,6 +113,8 @@ class HotelController extends BaseController
             $this->data = [];
             return $this->respose();
         }
+        
+        $hotel->number_of_rooms_assigned = $hotel->rooms->sum('quantity');
 
         $this->data = $hotel;
         $this->code = 200;
