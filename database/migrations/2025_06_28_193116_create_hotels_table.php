@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('hotels', function (Blueprint $table) {
             $table->id();
             $table->string('uuid')->unique();
-            $table->string('name', 255)->unique();
+            $table->string('name', 255);
             $table->string('address', 255)->nullable();
             $table->string('city');
             $table->string('nit', 255)->nullable();

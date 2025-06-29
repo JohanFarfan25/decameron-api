@@ -11,8 +11,6 @@ class Room extends Model
 
     protected $fillable = [
         'uuid',
-        'name',
-        'status',
         'hotel_id',
         'room_type',
         'accommodation',
@@ -21,6 +19,6 @@ class Room extends Model
 
     public function hotel()
     {
-        return $this->belongsTo(hotels::class, 'hotel_id');
+        return $this->belongsTo(Hotel::class, 'hotel_id');
     }
 }

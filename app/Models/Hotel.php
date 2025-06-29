@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Traits\GeneratesUuid;
 use Illuminate\Database\Eloquent\Model;
 
-class Hotels extends Model
+class Hotel extends Model
 {
     use GeneratesUuid;
 
@@ -20,7 +20,7 @@ class Hotels extends Model
 
     public function rooms()
     {
-        return $this->hasMany(rooms::class, 'hotel_id');
+        return $this->hasMany(Room::class, 'hotel_id');
     }
 
 }
