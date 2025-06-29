@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Hotel;
 use App\Models\Room;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RoomController extends Controller
 {
@@ -47,6 +48,22 @@ class RoomController extends Controller
         $this->data = $this->roomModel::select('id', 'uuid', 'hotel_id', 'room_type', 'accommodation', 'quantity')->get();
         return $this->respose();
     }
+
+    /**
+     * Obtiene los detalles de una habitación específica por su UUID.
+     * @author Johan Alexander Farfán Sierra <johanfarfan25@gmail.com>
+     */
+    public function shwowByHotel(string $hotelUuid)
+    {
+        $hotel = Hotel::where('uuid', $hotelUuid)->first();
+
+        $this->data = Room::where('hotel_id', $hotel->id)
+            ->select('room_type', 'accommodation', DB::raw('SUM(quantity) as total_quantity'))
+            ->groupBy('room_type', 'accommodation')
+            ->get();
+        return $this->respose();
+    }
+
 
     /**
      * Valida los datos de entrada para la creación o actualización de una habitación.

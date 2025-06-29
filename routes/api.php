@@ -16,4 +16,5 @@ Route::controller(\App\Http\Controllers\RoomController::class)->group(function (
     Route::put('rooms/{uuid}', 'update');
     Route::get('rooms/one/{uuid}', 'show');
     Route::delete('rooms/{uuid}', 'destroy');
+    Route::get('rooms/hotel/{hotelUuid}', 'shwowByHotel');
 });

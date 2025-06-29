@@ -47,7 +47,7 @@ class HotelController extends BaseController
         $this->data = $hotels;
         return $this->respose();
     }
-    
+
 
     /**
      * Valida los datos de entrada para la creación o actualización de un hotel.
@@ -113,8 +113,8 @@ class HotelController extends BaseController
             $this->data = [];
             return $this->respose();
         }
-        
-        $hotel->number_of_rooms_assigned = $hotel->rooms->sum('quantity');
+
+        $hotel->number_of_rooms_assigned = $hotel->rooms->sum('quantity') .' De '.$hotel->number_of_rooms;
 
         $this->data = $hotel;
         $this->code = 200;
