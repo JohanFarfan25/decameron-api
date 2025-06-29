@@ -47,7 +47,7 @@ class HotelController extends BaseController
         $this->data = $hotels;
         return $this->respose();
     }
-
+    
 
     /**
      * Valida los datos de entrada para la creación o actualización de un hotel.
@@ -100,7 +100,7 @@ class HotelController extends BaseController
     public function show(string $uuid)
     {
         $hotel = Hotel::with(['rooms' => function ($query) {
-            $query->select('uuid', 'name', 'status', 'hotel_id', 'room_type', 'accommodation', 'quantity');
+            $query->select('uuid', 'status', 'hotel_id', 'room_type', 'accommodation', 'quantity');
         }])
             ->where('uuid', $uuid)
             ->select('id', 'uuid', 'name', 'address', 'city', 'nit', 'number_of_rooms')
