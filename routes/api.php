@@ -4,9 +4,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HotelController;
 use App\Http\Controllers\RoomController;
 
+header('Access-Control-Allow-Origin: https://front-decameron.vercel.app');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+
 // Aplica CORS a todas las rutas API
-Route::middleware(['cors'])->group(function () {
-    
+Route::middleware(['api', 'cors'])->group(function () {
+
     Route::controller(HotelController::class)->group(function () {
         Route::get('hotels', 'index');
         Route::post('hotels', 'store');
@@ -23,5 +26,4 @@ Route::middleware(['cors'])->group(function () {
         Route::delete('rooms/{uuid}', 'destroy');
         Route::get('rooms/hotel/{hotelUuid}', 'showByHotel');
     });
-    
 });
