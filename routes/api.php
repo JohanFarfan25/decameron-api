@@ -4,9 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HotelController;
 use App\Http\Controllers\RoomController;
 
-header('Access-Control-Allow-Origin: https://front-decameron.vercel.app');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-
 // Aplica CORS a todas las rutas API
 Route::middleware(['api', 'cors'])->group(function () {
 

@@ -15,34 +15,20 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Middleware para rutas web
-        $middleware->web(append: [
-            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-            \Illuminate\Session\Middleware\StartSession::class,
-            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        ]);
-
-        // Middleware para rutas API con CORS
         $middleware->group('api', [
-            \Illuminate\Http\Middleware\HandleCors::class, // Middleware CORS incorporado
-            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+            \App\Http\Middleware\Cors::class,
+            \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        ]);
-
-        // Configuración global de CORS (opcional)
-        $middleware->validateCsrfTokens(except: [
-            'api/*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         // Manejo de excepciones para API
         $exceptions->render(function (Throwable $e, Request $request) {
             if ($request->is('api/*')) {
-                $statusCode = method_exists($e, 'getStatusCode') 
-                    ? $e->getStatusCode() 
-                    : (method_exists($e, 'getCode') && $e->getCode() !== 0 
-                        ? $e->getCode() 
+                $statusCode = method_exists($e, 'getStatusCode')
+                    ? $e->getStatusCode()
+                    : (method_exists($e, 'getCode') && $e->getCode() !== 0
+                        ? $e->getCode()
                         : 500);
 
                 // Validar que el código de estado sea un valor HTTP válido
