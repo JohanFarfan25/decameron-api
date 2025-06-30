@@ -45,7 +45,8 @@ class RoomController extends Controller
      */
     public function index()
     {
-        $this->data = $this->roomModel::select('id', 'uuid', 'hotel_id', 'room_type', 'accommodation', 'quantity')->get();
+        $this->data = $this->roomModel::select('id', 'uuid', 'hotel_id', 'room_type', 'accommodation', 'quantity')->orderBy('id', 'desc')->get();
+
         return $this->respose();
     }
 
@@ -108,7 +109,7 @@ class RoomController extends Controller
             return ['status' => 'error', 'message' => 'Ya existe una habitación con esa configuración'];
         }
 
-        if ($data['room_type'] == 'standard' && ($data['accommodation'] == "triple" || $data['accommodation'] == "triple")) {
+        if ($data['room_type'] == 'standard' && ($data['accommodation'] == "triple" || $data['accommodation'] == "cuadruple")) {
             return ['status' => 'error', 'message' => 'Tipo de habitación estándar solo admite alojamiento individual o doble'];
         }
         if ($data['room_type'] == 'junior' && ($data['accommodation'] == "single" || $data['accommodation'] == "double")) {
@@ -143,7 +144,9 @@ class RoomController extends Controller
     public function store(Request $request)
     {
         try {
-
+            $hotelUuid = $request->input('hotel_id');
+            $hotel = Hotel::where('uuid', $hotelUuid)->first();
+            $request['hotel_id'] = $hotel->id;
             $data = $this->validateData($request);
             $validateConfig = $this->validateConfigRoom($data);
 
@@ -173,7 +176,10 @@ class RoomController extends Controller
     public function update(Request $request, string $uuid)
     {
         try {
-
+            
+            $hotelUuid = $request->input('hotel_id');
+            $hotel = Hotel::where('uuid', $hotelUuid)->first();
+            $request['hotel_id'] = $hotel->id;
             $room = $this->roomModel::where('uuid', $uuid)->first();
 
             if (!$room) {

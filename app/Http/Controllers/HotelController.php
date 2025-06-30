@@ -43,7 +43,7 @@ class HotelController extends BaseController
      */
     public function index()
     {
-        $hotels = $this->hotelModel::select('id', 'uuid', 'name', 'address', 'city', 'nit', 'number_of_rooms')->get();
+        $hotels = $this->hotelModel::select('id', 'uuid', 'name', 'address', 'city', 'nit', 'number_of_rooms')->orderBy('id', 'desc')->get();
         $this->data = $hotels;
         return $this->respose();
     }
@@ -100,7 +100,7 @@ class HotelController extends BaseController
     public function show(string $uuid)
     {
         $hotel = Hotel::with(['rooms' => function ($query) {
-            $query->select('uuid', 'status', 'hotel_id', 'room_type', 'accommodation', 'quantity');
+            $query->select('id','uuid', 'status', 'hotel_id', 'room_type', 'accommodation', 'quantity')->orderBy('id', 'desc');
         }])
             ->where('uuid', $uuid)
             ->select('id', 'uuid', 'name', 'address', 'city', 'nit', 'number_of_rooms')

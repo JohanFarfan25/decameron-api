@@ -6,6 +6,7 @@ use App\Http\Controllers\HotelController;
 Route::controller(HotelController::class)->group(function () {
     Route::get('hotels', 'index');
     Route::post('hotels', 'store');
+    Route::put('hotels/{uuid}', 'update');
     Route::get('hotels/one/{uuid}', 'show');
     Route::delete('hotels/{uuid}', 'destroy');
 });
