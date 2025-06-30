@@ -15,9 +15,18 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Middleware para rutas API
         $middleware->group('api', [
-            \App\Http\Middleware\Cors::class,
+            \Illuminate\Http\Middleware\HandleCors::class, // Middleware CORS incorporado
             \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ]);
+
+        // Middleware para rutas web (si es necesario)
+        $middleware->web(append: [
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
     })
@@ -25,23 +34,42 @@ return Application::configure(basePath: dirname(__DIR__))
         // Manejo de excepciones para API
         $exceptions->render(function (Throwable $e, Request $request) {
             if ($request->is('api/*')) {
-                $statusCode = method_exists($e, 'getStatusCode')
-                    ? $e->getStatusCode()
-                    : (method_exists($e, 'getCode') && $e->getCode() !== 0
-                        ? $e->getCode()
-                        : 500);
-
-                // Validar que el código de estado sea un valor HTTP válido
-                $statusCode = $statusCode >= 100 && $statusCode < 600 ? $statusCode : 500;
+                $statusCode = $this->determineStatusCode($e);
 
                 return response()->json([
                     'success' => false,
                     'message' => $e->getMessage(),
                     'errors' => $e instanceof ValidationException ? $e->errors() : null,
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
+                    // Ocultar detalles de archivo y línea en producción
+                    'debug' => config('app.debug') ? [
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                        'trace' => $e->getTrace()
+                    ] : null,
                 ], $statusCode);
             }
         });
+
+        // Opcional: Reporte de excepciones
+        $exceptions->report(function (Throwable $e) {
+            // Lógica personalizada para reportar errores
+        });
     })
     ->create();
+
+// Función auxiliar para determinar el código de estado
+if (!function_exists('determineStatusCode')) {
+    function determineStatusCode(Throwable $e): int
+    {
+        if (method_exists($e, 'getStatusCode')) {
+            return $e->getStatusCode();
+        }
+
+        if (method_exists($e, 'getCode') && $e->getCode() !== 0) {
+            $code = $e->getCode();
+            return ($code >= 100 && $code < 600) ? $code : 500;
+        }
+
+        return 500;
+    }
+}

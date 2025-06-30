@@ -5,8 +5,8 @@ use App\Http\Controllers\HotelController;
 use App\Http\Controllers\RoomController;
 
 // Aplica CORS a todas las rutas API
-Route::middleware(['api', 'cors'])->group(function () {
-
+Route::middleware('api')->group(function () {
+    // Rutas para Hoteles
     Route::controller(HotelController::class)->group(function () {
         Route::get('hotels', 'index');
         Route::post('hotels', 'store');
@@ -15,6 +15,7 @@ Route::middleware(['api', 'cors'])->group(function () {
         Route::delete('hotels/{uuid}', 'destroy');
     });
 
+    // Rutas para Habitaciones
     Route::controller(RoomController::class)->group(function () {
         Route::get('rooms', 'index');
         Route::post('rooms', 'store');
