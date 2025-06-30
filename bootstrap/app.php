@@ -3,7 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\Client\Request;
+use Illuminate\Http\Request; // Cambiado de Http\Client\Request a Http\Request
 use Illuminate\Http\Middleware\HandleCors;
 use Illuminate\Validation\ValidationException;
 
@@ -15,7 +15,6 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Middleware global para todas las rutas
         $middleware->web(append: [
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
@@ -31,10 +30,14 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (Throwable $e, Request $request) {
             if ($request->is('api/*')) {
+                $statusCode = method_exists($e, 'getStatusCode') 
+                    ? $e->getStatusCode() 
+                    : 500;
+
                 return response()->json([
                     'message' => $e->getMessage(),
                     'errors' => $e instanceof ValidationException ? $e->errors() : null,
-                ], $this->getStatusCode($e));
+                ], $statusCode);
             }
         });
     })->create();
